@@ -248,11 +248,10 @@ def manage_reminders():
         return jsonify({'success': True, 'reminder': reminder})
     
     elif request.method == 'DELETE':
-        reminder_id = request.args.get('id')
-        global reminders
-        reminders = [r for r in reminders if str(r.get('id')) != str(reminder_id)]
-        return jsonify({'success': True})
-
+    global reminders                     # ✅ پہلے global declare کیا
+    reminder_id = request.args.get('id')
+    reminders = [r for r in reminders if str(r.get('id')) != str(reminder_id)]
+    return jsonify({'success': True})
 @app.route('/api/open-browser', methods=['POST'])
 def open_browser():
     """Open post in browser"""
