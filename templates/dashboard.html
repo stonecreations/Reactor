@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Monitor - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --red-primary: #dc3545;
+            --red-dark: #a71d2a;
+            --red-light: #f8d7da;
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            border-bottom: 2px solid var(--red-primary);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.2);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--text-primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-brand i {
+            color: var(--red-primary);
+            font-size: 1.8rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .btn-outline-light {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--text-primary);
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-primary);
+        }
+        
+        /* Stats Cards */
+        .stats-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--red-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .stats-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.2);
+        }
+        
+        .stats-card h3 {
+            color: var(--red-primary);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stats-card small {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Filter Buttons */
+        .filter-btn {
+            border-radius: 25px;
+            margin: 3px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: var(--text-primary);
+            background: transparent;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: var(--red-primary);
+        }
+        
+        .filter-btn.active {
+            background: var(--red-primary);
+            color: white;
+            border-color: var(--red-primary);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Fetch Button */
+        .fetch-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .fetch-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+            color: white;
+        }
+        
+        .fetch-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Post Cards */
+        .post-card {
+            background: var(--bg-card);
+            border-left: 4px solid var(--red-primary);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .post-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.15);
+            background: #1a2744;
+        }
+        
+        .profile-name {
+            color: var(--red-primary);
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .post-time {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .post-text {
+            color: #d1d1d1;
+            line-height: 1.6;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        /* Action Buttons */
+        .action-btn {
+            border-radius: 20px;
+            padding: 6px 15px;
+            font-size: 0.85rem;
+            margin: 3px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            background: transparent;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-outline-primary:hover {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+        
+        .btn-outline-success:hover {
+            background: #198754;
+            border-color: #198754;
+            color: white;
+        }
+        
+        .btn-outline-warning:hover {
+            background: #ffc107;
+            border-color: #ffc107;
+            color: black;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        /* Notification Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.5);
+            z-index: 9999;
+            animation: slideInRight 0.5s ease-out;
+            font-weight: 500;
+            max-width: 350px;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Modal Customization */
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--red-primary);
+            color: var(--text-primary);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-close-white {
+            filter: invert(1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .post-card {
+                margin: 10px 5px;
+                padding: 15px;
+            }
+            
+            .filter-btn {
+                padding: 6px 15px;
+                font-size: 0.8rem;
+            }
+            
+            .stats-card {
+                margin-bottom: 15px;
+            }
+            
+            .stats-card h3 {
+                font-size: 1.5rem;
+            }
+            
+            .action-btn {
+                padding: 5px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .toast-notification {
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
+                max-width: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar-brand {
+                font-size: 1rem;
+            }
+            
+            .post-text {
+                font-size: 0.9rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--red-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Auto Refresh Button Active State */
+        .auto-refresh-active {
+            background: var(--red-primary) !important;
+            border-color: var(--red-primary) !important;
+            color: white !important;
+            animation: pulse-btn 2s infinite;
+        }
+        
+        @keyframes pulse-btn {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <span class="navbar-brand">
+                <i class="bi bi-graph-up-arrow"></i>
+                Social Monitor
+            </span>
+            <div class="user-info">
+                <span class="d-none d-md-inline">
+                    <i class="bi bi-person-circle"></i>
+                    {{ session.get('username', 'User') }}
+                </span>
+                <a href="/logout" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="d-none d-md-inline ms-1">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Statistics Row -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stats-card">
+                    <h3 id="totalPosts">0</h3>
+                    <small><i class="bi bi-file-text"></i> Total Posts</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stats-card">
+                    <h3 id="imagePosts">0</h3>
+                    <small><i class="bi bi-image"></i> Image Posts</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stats-card">
+                    <h3 id="videoPosts">0</h3>
+                    <small><i class="bi bi-camera-video"></i> Video Posts</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="stats-card">
+                    <h3 id="remindersCount">0</h3>
+                    <small><i class="bi bi-bell"></i> Reminders</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <!-- Filter Buttons -->
+                    <div class="btn-group flex-wrap" role="group">
+                        <button class="btn filter-btn active" data-filter="all">
+                            <i class="bi bi-list-ul"></i> All Posts
+                        </button>
+                        <button class="btn filter-btn" data-filter="newest">
+                            <i class="bi bi-clock"></i> Newest
+                        </button>
+                        <button class="btn filter-btn" data-filter="images">
+                            <i class="bi bi-image"></i> Images
+                        </button>
+                        <button class="btn filter-btn" data-filter="videos">
+                            <i class="bi bi-camera-video"></i> Videos
+                        </button>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2">
+                        <button class="btn fetch-btn" onclick="fetchPosts()">
+                            <i class="bi bi-arrow-repeat"></i> Fetch Now
+                        </button>
+                        <button class="btn btn-outline-light" onclick="toggleAutoRefresh()" id="autoRefreshBtn">
+                            <i class="bi bi-play-circle"></i>
+                            <span class="d-none d-md-inline ms-1">Auto Refresh</span>
+                        </button>
+                        <button class="btn btn-outline-light" onclick="viewReminders()" data-bs-toggle="modal" data-bs-target="#remindersModal">
+                            <i class="bi bi-bell"></i>
+                            <span class="d-none d-md-inline ms-1">Reminders</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Container -->
+        <div class="row" id="postsContainer">
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p class="text-muted">No posts yet</p>
+                    <p class="text-muted small">Click "Fetch Now" to start monitoring posts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminders Modal -->
+    <div class="modal fade" id="remindersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-bell-fill text-danger"></i> Your Reminders
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="remindersList">
+                    <div class="text-center py-4">
+                        <div class="spinner"></div>
+                        <p class="mt-2">Loading reminders...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let autoRefreshInterval = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+            loadReminders();
+            
+            // Filter button click handlers
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    loadPosts();
+                });
+            });
+        });
+
+        // Fetch posts from API
+        async function fetchPosts() {
+            showNotification('🔄 Fetching latest posts...');
+            
+            // Show loading state
+            const fetchBtn = document.querySelector('.fetch-btn');
+            const originalText = fetchBtn.innerHTML;
+            fetchBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Fetching...';
+            fetchBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/fetch', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(`✅ Successfully fetched ${data.count} posts!`);
+                    await loadPosts();
+                } else {
+                    showNotification('❌ Error fetching posts: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showNotification('❌ Network error. Please try again.');
+            } finally {
+                // Restore button state
+                fetchBtn.innerHTML = originalText;
+                fetchBtn.disabled = false;
+            }
+        }
+
+        // Load posts with filters
+        async function loadPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            // Show loading
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="spinner mx-auto"></div>
+                    <p class="mt-3 text-muted">Loading posts...</p>
+                </div>`;
+            
+            try {
+                const response = await fetch(`/api/posts?filter=${currentFilter}`);
+                const data = await response.json();
+                
+                updateStats(data.posts);
+                renderPosts(data.posts);
+                
+                // Update last fetch time if available
+                if (data.last_fetch) {
+                    console.log('Last fetch:', new Date(data.last_fetch).toLocaleString());
+                }
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="bi bi-exclamation-triangle text-danger"></i>
+                            <p class="text-muted">Failed to load posts</p>
+                            <button class="btn btn-outline-danger mt-3" onclick="loadPosts()">
+                                <i class="bi bi-arrow-clockwise"></i> Retry
+                            </button>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        // Update statistics
+        function updateStats(posts) {
+            document.getElementById('totalPosts').textContent = posts.length;
+            document.getElementById('imagePosts').textContent = posts.filter(p => p.has_image).length;
+            document.getElementById('videoPosts').textContent = posts.filter(p => p.has_video).length;
+        }
+
+        // Render post cards
+        function renderPosts(posts) {
+            const container = document.getElementById('postsContainer');
+            
+            if (!posts || posts.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p class="text-muted">No posts found</p>
+                            <p class="text-muted small">Try changing filters or fetching new posts</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+            
+            container.innerHTML = posts.map(post => `
+                <div class="col-12">
+                    <div class="post-card">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap">
+                            <div class="mb-2">
+                                <span class="profile-name">
+                                    <i class="bi bi-person-badge"></i>
+                                    ${escapeHtml(post.profile_name || 'Unknown')}
+                                </span>
+                                <span class="post-time ms-3">
+                                    <i class="bi bi-clock"></i>
+                                    ${post.post_time ? new Date(post.post_time).toLocaleString() : 'Just now'}
+                                </span>
+                            </div>
+                            <div class="mb-2">
+                                ${post.has_image ? '<span class="badge bg-info me-1"><i class="bi bi-image"></i> Image</span>' : ''}
+                                ${post.has_video ? '<span class="badge bg-warning me-1"><i class="bi bi-camera-video"></i> Video</span>' : ''}
+                                <span class="badge bg-secondary">${post.platform || 'Social'}</span>
+                            </div>
+                        </div>
+                        
+                        <p class="post-text">${escapeHtml(post.post_text || 'No content')}</p>
+                        
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+                            <div class="d-flex flex-wrap gap-1">
+                                <button class="btn action-btn btn-outline-primary" 
+                                        onclick="openInBrowser('${escapeHtml(post.post_link || '#')}')">
+                                    <i class="bi bi-box-arrow-up-right"></i> Open
+                                </button>
+                                <button class="btn action-btn btn-outline-success" 
+                                        onclick="addReminder('${post.id}', 'react', '${escapeHtml(JSON.stringify(post))}')">
+                                    <i class="bi bi-emoji-smile"></i> React Later
+                                </button>
+                                <button class="btn action-btn btn-outline-warning" 
+                                        onclick="addReminder('${post.id}', 'reply', '${escapeHtml(JSON.stringify(post))}')">
+                                    <i class="bi bi-reply"></i> Reply Later
+                                </button>
+                            </div>
+                            
+                            ${post.post_link ? `
+                                <a href="${escapeHtml(post.post_link)}" target="_blank" 
+                                   class="text-danger text-decoration-none mt-2 mt-md-0">
+                                    <i class="bi bi-link-45deg"></i> View Original
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open post in browser
+        async function openInBrowser(link) {
+            try {
+                await fetch('/api/open-browser', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({link: link})
+                });
+                window.open(link, '_blank');
+                showNotification('🔗 Opening post in browser...');
+            } catch (error) {
+                console.error('Error opening browser:', error);
+            }
+        }
+
+        // Add reminder
+        async function addReminder(postId, type, postData) {
+            try {
+                const post = JSON.parse(postData);
+                
+                const response = await fetch('/api/reminders', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        type: type,
+                        post: post
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const typeLabel = type === 'react' ? 'Reaction' : 'Reply';
+                    showNotification(`✅ ${typeLabel} reminder added successfully!`);
+                    await loadReminders();
+                }
+            } catch (error) {
+                console.error('Error adding reminder:', error);
+                showNotification('❌ Failed to add reminder');
+            }
+        }
+
+        // Load reminders
+        async function loadReminders() {
+            try {
+                const response = await fetch('/api/reminders');
+                const data = await response.json();
+                
+                document.getElementById('remindersCount').textContent = data.reminders.length;
+                
+                const remindersList = document.getElementById('remindersList');
+                
+                if (!data.reminders || data.reminders.length === 0) {
+                    remindersList.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="bi bi-bell-slash" style="font-size: 3rem; color: #666;"></i>
+                            <p class="text-muted mt-2">No reminders yet</p>
+                            <p class="text-muted small">Add reminders from posts to keep track</p>
+                        </div>`;
+                    return;
+                }
+                
+                remindersList.innerHTML = data.reminders.map(r => `
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-3" 
+                         style="background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid ${r.type === 'react' ? '#198754' : '#ffc107'}">
+                        <div>
+                            <span class="badge ${r.type === 'react' ? 'bg-success' : 'bg-warning'} me-2">
+                                <i class="bi bi-${r.type === 'react' ? 'emoji-smile' : 'reply'}"></i>
+                                ${r.type === 'react' ? 'React' : 'Reply'}
+                            </span>
+                            <span style="color: #d1d1d1;">
+                                ${escapeHtml(r.post.profile_name || 'Unknown')}
+                            </span>
+                            <br>
+                            <small class="text-muted ms-4">
+                                ${escapeHtml((r.post.post_text || '').substring(0, 80))}...
+                            </small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" 
+                                onclick="removeReminder(${r.id})">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading reminders:', error);
+            }
+        }
+
+        // Remove reminder
+        async function removeReminder(id) {
+            try {
+                const response = await fetch(`/api/reminders?id=${id}`, { 
+                    method: 'DELETE' 
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('🗑️ Reminder removed');
+                    await loadReminders();
+                }
+            } catch (error) {
+                console.error('Error removing reminder:', error);
+            }
+        }
+
+        // Toggle auto refresh
+        async function toggleAutoRefresh() {
+            const btn = document.getElementById('autoRefreshBtn');
+            
+            if (autoRefreshInterval) {
+                // Stop auto refresh
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                btn.innerHTML = '<i class="bi bi-play-circle"></i> <span class="d-none d-md-inline ms-1">Auto Refresh</span>';
+                btn.classList.remove('auto-refresh-active');
+                
+                await fetch('/api/auto-refresh', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({enabled: false})
+                });
+                
+                showNotification('⏸️ Auto refresh disabled');
+            } else {
+                // Start auto refresh (every 5 minutes)
+                autoRefreshInterval = setInterval(() => {
+                    fetchPosts();
+                }, 300000);
+                
+                btn.innerHTML = '<i class="bi bi-stop-circle"></i> <span class="d-none d-md-inline ms-1">Stop Refresh</span>';
+                btn.classList.add('auto-refresh-active');
+                
+                await fetch('/api/auto-refresh', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({enabled: true, interval: 300})
+                });
+                
+                showNotification('▶️ Auto refresh enabled (every 5 minutes)');
+            }
+        }
+
+        // View reminders (modal)
+        function viewReminders() {
+            loadReminders();
+        }
+
+        // Show notification toast
+        function showNotification(message) {
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.toast-notification');
+            existing.forEach(el => el.remove());
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = 'toast-notification';
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease-out forwards';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 500);
+            }, 3000);
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>
