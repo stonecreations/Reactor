@@ -229,6 +229,8 @@ def fetch_posts():
 @app.route('/api/reminders', methods=['GET', 'POST', 'DELETE'])
 def manage_reminders():
     """Manage reminder posts"""
+    global reminders  # ✅ FIXED: Sab se pehle global declare karo
+    
     if 'authenticated' not in session:
         return jsonify({'error': 'Not authenticated'}), 401
     
@@ -248,7 +250,6 @@ def manage_reminders():
         return jsonify({'success': True, 'reminder': reminder})
     
     elif request.method == 'DELETE':
-        global reminders
         reminder_id = request.args.get('id')
         reminders = [r for r in reminders if str(r.get('id')) != str(reminder_id)]
         return jsonify({'success': True})
